@@ -1,12 +1,29 @@
-export default (images, cover = 1, autoplay, interval, withoutLoop, shuffle) => ({
+export default (images, cover = 1, autoplay, interval, withoutLoop, shuffle, cardCarousel = false, cardsPerView = 3) => ({
   images: images,
   time: interval,
   current: cover,
   interval: null,
   paused: false,
+  cardCarousel: cardCarousel,
+  cardsPerView: cardsPerView,
+  defaultCardsPerView: cardsPerView,
   init() {
     if (shuffle) this.shuffle();
+    if (cardCarousel) {
+      this.updateCardsPerView();
+      window.addEventListener('resize', () => this.updateCardsPerView());
+    }
     if (autoplay) this.play();
+  },
+  updateCardsPerView() {
+    const width = window.innerWidth;
+    if (width >= 1024) {
+      this.cardsPerView = this.defaultCardsPerView;
+    } else if (width >= 768) {
+      this.cardsPerView = Math.min(2, this.defaultCardsPerView);
+    } else {
+      this.cardsPerView = 1;
+    }
   },
   /**
    * Shuffle the carousel images.
@@ -52,19 +69,26 @@ export default (images, cover = 1, autoplay, interval, withoutLoop, shuffle) => 
    * @returns {void}
    */
   next() {
-    if (withoutLoop && this.current === this.images.length) {
-      return;
+    if (cardCarousel) {
+      const maxSlide = this.images.length - this.cardsPerView + 1;
+      if (withoutLoop && this.current >= maxSlide) {
+        return;
+      }
+      if (this.current < maxSlide) {
+        this.current = this.current + 1;
+      } else {
+        this.current = 1;
+      }
+    } else {
+      if (withoutLoop && this.current === this.images.length) {
+        return;
+      }
+      if (this.current < this.images.length) {
+        this.current = this.current + 1;
+      } else {
+        this.current = 1;
+      }
     }
-
-    if (this.current < this.images.length) {
-      this.current = this.current + 1;
-
-      this.event('next');
-
-      return;
-    }
-
-    this.current = 1;
 
     this.event('next');
   },
@@ -74,19 +98,26 @@ export default (images, cover = 1, autoplay, interval, withoutLoop, shuffle) => 
    * @returns {void}
    */
   previous() {
-    if (withoutLoop && this.current === 1) {
-      return;
+    if (cardCarousel) {
+      const maxSlide = this.images.length - this.cardsPerView + 1;
+      if (withoutLoop && this.current === 1) {
+        return;
+      }
+      if (this.current > 1) {
+        this.current = this.current - 1;
+      } else {
+        this.current = maxSlide;
+      }
+    } else {
+      if (withoutLoop && this.current === 1) {
+        return;
+      }
+      if (this.current > 1) {
+        this.current = this.current - 1;
+      } else {
+        this.current = this.images.length;
+      }
     }
-
-    if (this.current > 1) {
-      this.current = this.current - 1;
-
-      this.event('previous');
-
-      return;
-    }
-
-    this.current = this.images.length;
 
     this.event('previous');
   },

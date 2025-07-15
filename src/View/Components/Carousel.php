@@ -26,6 +26,8 @@ class Carousel extends TallStackUiComponent implements Personalization
         public ?string $wrapper = null,
         public ?ComponentSlot $header = null,
         public ?ComponentSlot $footer = null,
+        public ?bool $cardCarousel = null,
+        public ?int $cardsPerView = 3,
     ) {
         $this->images = collect($this->images);
 
@@ -58,6 +60,19 @@ class Carousel extends TallStackUiComponent implements Personalization
                     'description' => 'text-sm text-white',
                 ],
                 'base' => 'absolute w-full h-full inset-0 object-cover text-slate-700 dark:text-slate-300',
+            ],
+            'card' => [
+                'wrapper' => [
+                    'container' => 'flex transition-transform duration-500 ease-in-out',
+                    'slide' => 'flex-shrink-0 px-2',
+                    'card' => 'bg-white dark:bg-dark-800 rounded-xl shadow-lg overflow-hidden h-full',
+                ],
+                'content' => [
+                    'image' => 'w-full h-48 object-cover',
+                    'body' => 'p-4',
+                    'title' => 'text-lg font-semibold text-gray-900 dark:text-white mb-2',
+                    'description' => 'text-sm text-gray-600 dark:text-gray-300',
+                ],
             ],
             'buttons' => [
                 'left' => [
