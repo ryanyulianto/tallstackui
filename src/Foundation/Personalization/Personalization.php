@@ -14,6 +14,9 @@ use TallStackUi\View\Components\Button\Circle;
 use TallStackUi\View\Components\Card;
 use TallStackUi\View\Components\Carousel;
 use TallStackUi\View\Components\Clipboard;
+use TallStackUi\View\Components\Command\Command;
+use TallStackUi\View\Components\Command\Content as CommandContent;
+use TallStackUi\View\Components\Command\Items as CommandItems;
 use TallStackUi\View\Components\Dropdown\Dropdown;
 use TallStackUi\View\Components\Dropdown\Items as DropdownItems;
 use TallStackUi\View\Components\Dropdown\Submenu as DropdownSubmenu;
@@ -153,6 +156,22 @@ class Personalization
         $this->scope ??= $scope;
 
         return $this->component(Clipboard::class);
+    }
+
+    public function command(?string $component = null, ?string $scope = null): PersonalizationFactory
+    {
+        $this->scope ??= $scope;
+
+        $component ??= 'command';
+
+        $class = match ($component) {
+            'command' => Command::class,
+            'content' => CommandContent::class,
+            'items' => CommandItems::class,
+            default => $component,
+        };
+
+        return $this->component($class);
     }
 
     public function dialog(?string $scope = null): PersonalizationFactory
